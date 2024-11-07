@@ -2,8 +2,11 @@ import { useState } from "react";
 import { IoCartOutline, IoSearchOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { Sidebar } from "./SideBar";
+import useCartStore from "@/stores/cart/cartStore";
 
 export default function Header({ categorias }) {
+  const totalItemsInCart = useCartStore((state) => state.getTotalItems());
+
   const [open, setOpen] = useState(false);
 
   return (
@@ -35,10 +38,10 @@ export default function Header({ categorias }) {
           <IoSearchOutline className="w-5 h-5" />
         </Link>
 
-        <Link to="/cart" className="mx-2">
+        <Link to={totalItemsInCart === 0 ? "/empty" : "/cart"} className="mx-2">
           <div className="relative">
-            <span className="absolute text-xs px-1 rounded-full font-bold -top-2 -right-2 bg-blue-700 text-white">
-              3
+            <span className="fade-in absolute text-xs px-1 rounded-full font-bold -top-2 -right-2 bg-blue-700 text-white">
+              {totalItemsInCart}
             </span>
             <IoCartOutline className="w-5 h-5" />
           </div>

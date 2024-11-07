@@ -7,22 +7,22 @@ import { useParams } from "react-router-dom";
 export default function CategoriaView() {
   const params = useParams();
   const categoriaId = params.categoriaId;
-  const { data, isLoading, isError } = useQuery({
+  const { data: categoria, isLoading, isError } = useQuery({
     queryKey: ["categoria", categoriaId],
-    queryFn: () => categoriaService.getById({ id: categoriaId }),
+    queryFn: () => categoriaService.getByIdPublic({ id: categoriaId }),
     retry: false,
   });
 
   if (isLoading) return "Cargando...";
 
-  if (data) {
+  if (categoria) {
     return (
       <>
         <Title
-          title={`${data.nombre}`}
-          subtitle={`Productos de ${data.nombre}`}
+          title={`${categoria.nombre}`}
+          subtitle={`Productos de ${categoria.nombre}`}
         />
-        <ProductGrid productos={data.productos} />
+        <ProductGrid productos={categoria.productos} />
       </>
     );
   }

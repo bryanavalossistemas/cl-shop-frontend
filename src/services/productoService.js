@@ -2,7 +2,7 @@ import api from "@/libs/axios";
 
 class ProductoService {
   async create({ payload }) {
-    const { data } = await api.post("/productos", payload);
+    const { data } = await api.post("/productos/public", payload);
 
     return data;
   }
@@ -10,20 +10,23 @@ class ProductoService {
   async getAll() {
     const { data: respuesta } = await api.get("/productos");
 
-    const productos = respuesta.data.map((producto) => {
-      return {
-        ...producto,
-        imagenUrl: producto.imagenProducto.url,
-        categoria: producto.categoria.nombre,
-        marca: producto.marca.nombre,
-      };
-    });
+    return respuesta.data;
+  }
 
-    return productos;
+  async getAllPublic() {
+    const { data: respuesta } = await api.get("/productos/public");
+
+    return respuesta.data;
   }
 
   async getById({ id }) {
     const { data: respuesta } = await api.get(`/productos/${id}`);
+
+    return respuesta.data;
+  }
+
+  async getByIdPublic({ id }) {
+    const { data: respuesta } = await api.get(`/productos/${id}/public`);
 
     return respuesta.data;
   }

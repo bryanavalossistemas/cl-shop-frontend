@@ -8,13 +8,19 @@ class ProductoService {
   }
 
   async getAll() {
-    const { data: respuesta } = await api.get("/categorias");
+    const { data: respuesta } = await api.get("/categorias/public");
 
     return respuesta.data;
   }
 
   async getById({ id }) {
     const { data: respuesta } = await api.get(`/categorias/${id}`);
+
+    return respuesta.data;
+  }
+
+	async getByIdPublic({ id }) {
+    const { data: respuesta } = await api.get(`/categorias/${id}/public`);
 
     return respuesta.data;
   }

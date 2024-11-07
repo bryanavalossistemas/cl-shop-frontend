@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import productoService from "@/services/productoService";
 import ProductSlideshow from "./components/ProductSlideshow";
 import ProductMobileSlideshow from "./components/ProductMobileSlideshow";
-import QuantitySelector from "@/components/QuantitySelector";
+import formatCurrency from "@/utils/formatCurrency";
+import AddToCart from "./components/AddToCart";
+import StockLabel from "./components/StockLabel";
 
 export default function ProductoView() {
   const params = useParams();
@@ -14,7 +16,7 @@ export default function ProductoView() {
     isError,
   } = useQuery({
     queryKey: ["producto", productoId],
-    queryFn: () => productoService.getById({ id: productoId }),
+    queryFn: () => productoService.getByIdPublic({ id: productoId }),
     retry: false,
   });
 
@@ -28,37 +30,32 @@ export default function ProductoView() {
           {/* Mobile Slideshow */}
           <ProductMobileSlideshow
             title={producto.nombre}
-            images={[producto.imagenProducto, producto.imagenProducto]}
+            images={producto.imagenesProducto}
             className="block md:hidden"
           />
 
           {/* Desktop Slideshow */}
           <ProductSlideshow
             title={producto.nombre}
-            images={[producto.imagenProducto, producto.imagenProducto]}
+            images={producto.imagenesProducto}
             className="hidden md:block"
           />
         </div>
 
         {/* Detalles */}
         <div className="col-span-1 px-5">
+          <StockLabel stock={producto.stock} />
+
           <h1 className={`font-title antialiased font-bold text-xl`}>
             {producto.nombre}
           </h1>
-          <p className="text-lg mb-5">${producto.precioVenta}</p>
+          <p className="text-lg mb-5">{formatCurrency(producto.precioVenta)}</p>
 
-          <h3 className="font-bold text-sm mb-2">Cantidad</h3>
-          {/* Selector de Cantidad */}
-          <QuantitySelector quantity={2} />
-
-          {/* Button */}
-          <button className="btn-primary my-5 w-full sm:w-auto">
-            Agregar al carrito
-          </button>
+          <AddToCart producto={producto} />
 
           {/* Descripción */}
           <h3 className="font-bold text-sm">Descripción</h3>
-          <p className="font-light">{producto.nombre}</p>
+          <p className="font-light">{producto.descripcion}</p>
         </div>
       </div>
     );
