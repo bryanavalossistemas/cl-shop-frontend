@@ -2,6 +2,9 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import useAddressStore from "@/stores/address/addressStore";
+import { useMutation } from "@tanstack/react-query";
+import compradorService from "@/services/compradorService";
+import { useNavigate } from "react-router-dom";
 
 export default function AddressForm({ distritos, direccionComprador = {} }) {
   const {
@@ -16,18 +19,59 @@ export default function AddressForm({ distritos, direccionComprador = {} }) {
     },
   });
 
+  const {
+    mutate: createOrUpdateDireccionComprador,
+    isPending: isPendingCreateOrUpdateDireccionComprador,
+  } = useMutation({
+    mutationFn: compradorService.createOrUpdateDireccionCompradorByUsuarioId,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: () => {
+      navigate("/checkout");
+    },
+  });
+
+  const navigate = useNavigate();
+
+  const {
+    mutate: deleteDireccionComprador,
+    isPending: isPendingDeleteDireccionComprador,
+  } = useMutation({
+    mutationFn: compradorService.deleteDireccionCompradorByUsuarioId,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: () => {
+      navigate("/checkout");
+    },
+  });
+
+  const setAddress = useAddressStore((state) => state.setAddress);
+  const address = useAddressStore((state) => state.address);
+  const clearAddress = useAddressStore((state) => state.clearAddress);
+
+  useEffect(() => {
+    if (address.nombre) {
+      reset(address);
+    }
+  }, []);
+
   const onSubmit = async (data) => {
-    // const { rememberAddress, ...restAddress } = data;
+    const distrito = distritos.find(
+      (distrito) => distrito.id == data.distritoId
+    ).nombre;
+    const { rememberAddress, ...restAddress } = data;
 
-    // setAddress(restAddress);
+    setAddress({ ...data, distrito });
 
-    // if (rememberAddress) {
-    //   await setUserAddress(restAddress, session.user.id);
-    // } else {
-    //   await deleteUserAddress(session.user.id);
-    // }
-
-    // router.push("/checkout");
+    if (rememberAddress) {
+      createOrUpdateDireccionComprador({ data: restAddress });
+    } else {
+      deleteDireccionComprador();
+      clearAddress();
+    }
+    navigate("/checkout");
   };
 
   return (
@@ -120,12 +164,15 @@ export default function AddressForm({ distritos, direccionComprador = {} }) {
         </div>
 
         <button
-          disabled={!isValid}
+          disabled={
+            isPendingCreateOrUpdateDireccionComprador ||
+            isPendingDeleteDireccionComprador
+          }
           type="submit"
-          className={clsx({
+          className={`disabled:opacity-50 disabled:pointer-events-none ${clsx({
             "btn-primary": isValid,
             "btn-disabled": !isValid,
-          })}
+          })}`}
         >
           Siguiente
         </button>

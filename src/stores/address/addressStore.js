@@ -8,12 +8,28 @@ const useAddressStore = create()(
         nombre: "",
         apellido: "",
         direccion: "",
+        distritoId: "",
         distrito: "",
         celular: "",
+        rememberAddress: "",
       },
 
       setAddress: (address) => {
         set({ address });
+      },
+
+      clearAddress: () => {
+        set({
+          address: {
+            nombre: "",
+            apellido: "",
+            direccion: "",
+            distritoId: "",
+            distrito: "",
+            celular: "",
+            rememberAddress: "",
+          },
+        });
       },
     }),
     { name: "rn-shop-address-store" }
