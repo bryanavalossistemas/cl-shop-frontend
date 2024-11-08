@@ -3,10 +3,10 @@ import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import useAddressStore from "@/stores/address/addressStore";
 import { useMutation } from "@tanstack/react-query";
-import compradorService from "@/services/compradorService";
+import direccionService from "@/services/direccionService";
 import { useNavigate } from "react-router-dom";
 
-export default function AddressForm({ distritos, direccionComprador = {} }) {
+export default function AddressForm({ distritos, direccion = {} }) {
   const {
     handleSubmit,
     register,
@@ -14,16 +14,16 @@ export default function AddressForm({ distritos, direccionComprador = {} }) {
     reset,
   } = useForm({
     defaultValues: {
-      ...direccionComprador,
+      ...direccion,
       rememberAddress: false,
     },
   });
 
   const {
-    mutate: createOrUpdateDireccionComprador,
-    isPending: isPendingCreateOrUpdateDireccionComprador,
+    mutate: createOrUpdateDireccion,
+    isPending: isPendingCreateOrUpdateDireccion,
   } = useMutation({
-    mutationFn: compradorService.createOrUpdateDireccionCompradorByUsuarioId,
+    mutationFn: direccionService.createOrUpdateDireccion,
     onError: (error) => {
       console.log(error);
     },
@@ -34,18 +34,16 @@ export default function AddressForm({ distritos, direccionComprador = {} }) {
 
   const navigate = useNavigate();
 
-  const {
-    mutate: deleteDireccionComprador,
-    isPending: isPendingDeleteDireccionComprador,
-  } = useMutation({
-    mutationFn: compradorService.deleteDireccionCompradorByUsuarioId,
-    onError: (error) => {
-      console.log(error);
-    },
-    onSuccess: () => {
-      navigate("/checkout");
-    },
-  });
+  const { mutate: deleteDireccion, isPending: isPendingDeleteDireccion } =
+    useMutation({
+      mutationFn: direccionService.deleteDireccion,
+      onError: (error) => {
+        console.log(error);
+      },
+      onSuccess: () => {
+        navigate("/checkout");
+      },
+    });
 
   const setAddress = useAddressStore((state) => state.setAddress);
   const address = useAddressStore((state) => state.address);
@@ -66,12 +64,11 @@ export default function AddressForm({ distritos, direccionComprador = {} }) {
     setAddress({ ...data, distrito });
 
     if (rememberAddress) {
-      createOrUpdateDireccionComprador({ data: restAddress });
+      createOrUpdateDireccion({ data: restAddress });
     } else {
-      deleteDireccionComprador();
+      deleteDireccion();
       clearAddress();
     }
-    navigate("/checkout");
   };
 
   return (
@@ -165,8 +162,7 @@ export default function AddressForm({ distritos, direccionComprador = {} }) {
 
         <button
           disabled={
-            isPendingCreateOrUpdateDireccionComprador ||
-            isPendingDeleteDireccionComprador
+            isPendingCreateOrUpdateDireccion || isPendingDeleteDireccion
           }
           type="submit"
           className={`disabled:opacity-50 disabled:pointer-events-none ${clsx({

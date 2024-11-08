@@ -2,7 +2,7 @@ import Title from "@/components/Title";
 import AddressForm from "./components/AddressForm";
 import distritoService from "@/services/distritoService";
 import { useQuery } from "@tanstack/react-query";
-import compradorService from "@/services/compradorService";
+import direccionService from "@/services/direccionService";
 import useSession from "@/hooks/useSession";
 
 export default function CheckoutAdressView() {
@@ -17,9 +17,9 @@ export default function CheckoutAdressView() {
     queryFn: distritoService.getAllPublic,
   });
 
-  const { data: direccionComprador } = useQuery({
-    queryKey: ["direccionComprador"],
-    queryFn: compradorService.getDireccionCompradorByUsuarioId,
+  const { data: direccion } = useQuery({
+    queryKey: ["direccion"],
+    queryFn: direccionService.getDireccion,
   });
 
   if (isLoading) return "cargando ...";
@@ -27,7 +27,7 @@ export default function CheckoutAdressView() {
   if (
     distritos &&
     usuario &&
-    (direccionComprador || direccionComprador === null)
+    (direccion || direccion === null)
   ) {
     return (
       <div className="flex flex-col sm:justify-center sm:items-center mb-72 px-10 sm:px-0">
@@ -36,7 +36,7 @@ export default function CheckoutAdressView() {
 
           <AddressForm
             distritos={distritos}
-            direccionComprador={direccionComprador ?? undefined}
+            direccion={direccion ?? undefined}
           />
         </div>
       </div>
