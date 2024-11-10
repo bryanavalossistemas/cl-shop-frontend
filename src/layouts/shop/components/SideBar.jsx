@@ -1,3 +1,5 @@
+import useSession from "@/hooks/useSession";
+import useAuthStore from "@/stores/auth/authStore";
 import { clsx } from "clsx";
 import {
   IoCloseOutline,
@@ -12,6 +14,16 @@ import {
 import { Link } from "react-router-dom";
 
 export const Sidebar = ({ open, setOpen }) => {
+  const setToken = useAuthStore((state) => state.setToken);
+  const usuario = useSession();
+
+  const isAuthenticated = !!usuario;
+  const isAdmin = usuario?.rolId === 1;
+
+  function logout() {
+    setToken({ token: null });
+  }
+
   return (
     <div>
       {/* Background black */}
@@ -54,64 +66,64 @@ export const Sidebar = ({ open, setOpen }) => {
 
         {/* Menú */}
 
-        <Link
-          to="/"
-          className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-        >
-          <IoPersonOutline size={30} />
-          <span className="ml-3 text-xl">Perfil</span>
-        </Link>
+        {isAuthenticated && (
+          <>
+            <Link
+              to="/profile"
+              onClick={() => setOpen(false)}
+              className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+            >
+              <IoPersonOutline size={30} />
+              <span className="ml-3 text-xl">Perfil</span>
+            </Link>
 
-        <Link
-          to="/"
-          className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-        >
-          <IoTicketOutline size={30} />
-          <span className="ml-3 text-xl">Ordenes</span>
-        </Link>
+            <Link
+              to="/orders"
+              onClick={() => setOpen(false)}
+              className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+            >
+              <IoTicketOutline size={30} />
+              <span className="ml-3 text-xl">Ordenes</span>
+            </Link>
+          </>
+        )}
 
-        <Link
-          to="/auth/login"
-          className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-        >
-          <IoLogInOutline size={30} />
-          <span className="ml-3 text-xl">Ingresar</span>
-        </Link>
+        {isAuthenticated && (
+          <button
+            className="flex w-full items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+            onClick={() => logout()}
+          >
+            <IoLogOutOutline size={30} />
+            <span className="ml-3 text-xl">Salir</span>
+          </button>
+        )}
 
-        <Link
-          to="/"
-          className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-        >
-          <IoLogOutOutline size={30} />
-          <span className="ml-3 text-xl">Salir</span>
-        </Link>
+        {!isAuthenticated && (
+          <Link
+            to="/auth/login"
+            className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+            onClick={() => setOpen(false)}
+          >
+            <IoLogInOutline size={30} />
+            <span className="ml-3 text-xl">Ingresar</span>
+          </Link>
+        )}
 
-        {/* Line Separator */}
-        <div className="w-full h-px bg-gray-200 my-10" />
+        {isAdmin && (
+          <>
+            {/* Line Separator */}
+            <div className="w-full h-px bg-gray-200 my-10" />
 
-        <Link
-          to="/"
-          className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-        >
-          <IoShirtOutline size={30} />
-          <span className="ml-3 text-xl">Productos</span>
-        </Link>
-
-        <Link
-          to="/"
-          className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-        >
-          <IoTicketOutline size={30} />
-          <span className="ml-3 text-xl">Ordenes</span>
-        </Link>
-
-        <Link
-          to="/"
-          className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
-        >
-          <IoPeopleOutline size={30} />
-          <span className="ml-3 text-xl">Usuarios</span>
-        </Link>
+            <Link
+              to={import.meta.env.VITE_RN_SYSTEM_URL}
+              onClick={() => setOpen(false)}
+              className="flex items-center mt-10 p-2 hover:bg-gray-100 rounded transition-all"
+            >
+              <IoShirtOutline size={30} />
+              <span className="ml-3 text-xl">R&N System</span>
+            </Link>
+          </>
+        )}
       </nav>
     </div>
   );

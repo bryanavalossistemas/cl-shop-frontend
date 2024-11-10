@@ -1,15 +1,46 @@
+import ordenService from "@/services/ordenService";
 import useAddressStore from "@/stores/address/addressStore";
 import useCartStore from "@/stores/cart/cartStore";
 import formatCurrency from "@/utils/formatCurrency";
-import clsx from "clsx";
+import { useMutation } from "@tanstack/react-query";
+// import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 export default function PlaceOrder() {
   const address = useAddressStore((state) => state.address);
   const { itemsInCart, subtotal, igv, total } = useCartStore((state) =>
     state.getSummaryInformation()
   );
+  const cart = useCartStore((state) => state.cart);
+  const clearCart = useCartStore((state) => state.clearCart);
 
-  const onPlaceOrder = async () => {};
+  const navigate = useNavigate();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: ordenService.create,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: ({ orden }) => {
+      clearCart();
+      navigate(`/order/${orden.id}`);
+    },
+  });
+
+  const onPlaceOrder = async () => {
+    const detallesOrden = cart.map((item) => {
+      return { productoId: item.id, cantidad: item.cantidad };
+    });
+    const direccionOrden = {
+      nombre: address.nombre,
+      apellido: address.apellido,
+      direccion: address.direccion,
+      celular: address.celular,
+      distritoId: address.distritoId,
+    };
+
+    mutate({ data: { detallesOrden, ...direccionOrden } });
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-xl p-7">
@@ -64,6 +95,7 @@ export default function PlaceOrder() {
         {/* <p className="text-red-500">{errorMessage}</p> */}
 
         <button
+          disabled={isPending}
           onClick={onPlaceOrder}
           // className={clsx({
           //   "btn-primary": !isPlacingOrder,

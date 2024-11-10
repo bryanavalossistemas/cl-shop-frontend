@@ -12,6 +12,7 @@ import CheckoutView from "@/views/shop/checkout/CheckoutView";
 import OrderView from "@/views/shop/orders/order/OrderView";
 import OrdersView from "@/views/shop/orders/OrdersView";
 import EmptyView from "@/views/shop/empty/EmptyView";
+import ProfileView from "@/views/shop/profile/ProfileView";
 
 // AUTH
 import AuthLayout from "@/layouts/auth/AuthLayout";
@@ -31,9 +32,10 @@ export default function Router() {
           <Route path="/cart" element={<CartView />} />
           <Route path="/checkout/address" element={<CheckoutAdressView />} />
           <Route path="/checkout" element={<CheckoutView />} />
-          <Route path="/order/:orderId" element={<OrderView />} />
+          <Route path="/order/:ordenId" element={<OrderView />} />
           <Route path="/orders" element={<OrdersView />} />
           <Route path="/empty" element={<EmptyView />} />
+          <Route path="/profile" element={<ProfileView />} />
         </Route>
 
         <Route element={<AuthLayout />}>
