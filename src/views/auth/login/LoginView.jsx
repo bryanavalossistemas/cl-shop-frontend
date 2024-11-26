@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { IoInformationOutline } from "react-icons/io5";
 import { useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function LoginView() {
   const setToken = useAuthStore((state) => state.setToken);
@@ -27,14 +28,31 @@ export default function LoginView() {
       console.log(error);
       setLoginError(true);
     },
-    onSuccess: ({ token }) => {
+    onSuccess: ({ token, nombre }) => {
       setToken({ token });
       navigate("/");
+      alert(`Bienvenido ${nombre}`);
     },
   });
 
   const handleIniciarSesion = (data) => {
     mutate({ data });
+  };
+
+  const { mutate: mutateGoogle, isPendingGoogle } = useMutation({
+    mutationFn: authService.google,
+    onError: (error) => {
+      console.log(error);
+    },
+    onSuccess: ({ token, nombre }) => {
+      setToken({ token });
+      navigate("/");
+      alert(`Bienvenido ${nombre}`);
+    },
+  });
+
+  const handleLoginGoogle = (credentialResponse) => {
+    mutateGoogle({ googleToken: credentialResponse.credential });
   };
 
   return (
@@ -58,25 +76,24 @@ export default function LoginView() {
           type="password"
           {...register("contrasenia", { required: true })}
         />
-
-        <div
-          className="flex h-8 items-end space-x-1"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {loginError && (
+        {loginError && (
+          <div
+            className="flex h-8 items-end space-x-1"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <div className="flex flex-row mb-2">
               <IoInformationOutline className="h-5 w-5 text-red-500" />
               <p className="text-sm text-red-500">
                 Credenciales no son correctas
               </p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <button
           type="submit"
-          className={clsx({
+          className={clsx("mb-5", {
             "btn-primary": !isPending,
             "btn-disabled": isPending,
           })}
@@ -84,6 +101,11 @@ export default function LoginView() {
         >
           Ingresar
         </button>
+
+        <GoogleLogin
+          onSuccess={handleLoginGoogle}
+          onError={() => console.log("Error en la autenticación")}
+        />
 
         {/* divisor l ine */}
         <div className="flex items-center my-5">

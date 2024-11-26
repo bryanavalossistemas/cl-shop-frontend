@@ -1,4 +1,5 @@
 import api from "@/libs/axios";
+import { jwtDecode } from "jwt-decode";
 
 class UsuarioService {
   async getUsuario({ payload }) {
@@ -9,8 +10,20 @@ class UsuarioService {
 
   async login({ data }) {
     const { data: respuesta } = await api.post("/auth/login", data);
+    const token = respuesta.token;
+    const decodedToken = jwtDecode(token);
+    const nombre = decodedToken.nombre;
 
-    return { token: respuesta.token };
+    return { token, nombre };
+  }
+
+  async google({ googleToken }) {
+    const { data: respuesta } = await api.post("/auth/google", { googleToken });
+    const token = respuesta.token;
+    const decodedToken = jwtDecode(token);
+    const nombre = decodedToken.nombre;
+
+    return { token, nombre };
   }
 }
 
