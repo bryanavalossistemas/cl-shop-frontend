@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import ordenService from "@/services/ordenService";
 import formatCurrency from "@/utils/formatCurrency";
 import OrderStatus from "./components/OrderStatus";
+import WhatsAppLink from "./components/WhatsApp";
 
 export default function OrderView() {
   const params = useParams();
@@ -32,37 +33,43 @@ export default function OrderView() {
           <Title title={`Orden #${orden.id}`} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
             {/* Carrito */}
-            <div className="flex flex-col mt-5">
-              <OrderStatus estaPagado={orden?.estaPagado ?? false} />
-              {/* Items */}
-              {orden.detallesOrden.map((detalleOrden) => (
-                <div key={detalleOrden.nombreProducto} className="flex mb-5">
-                  <img
-                    src={`${detalleOrden.producto.imagenesProducto[0].url}`}
-                    width={100}
-                    height={100}
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                    }}
-                    alt={detalleOrden.nombreProducto}
-                    className="mr-5 rounded"
-                  />
-                  <div>
-                    <p>{detalleOrden.nombreProducto}</p>
-                    <p>
-                      {formatCurrency(detalleOrden.precioVenta)} x{" "}
-                      {detalleOrden.cantidad}
-                    </p>
-                    <p className="font-bold">
-                      Subtotal:{" "}
-                      {formatCurrency(
-                        detalleOrden.precioVenta * detalleOrden.cantidad
-                      )}
-                    </p>
+            <div className="flex flex-col gap-y-4">
+              <div className="flex flex-col mt-5">
+                <OrderStatus estaPagado={orden?.estaPagado ?? false} />
+                {/* Items */}
+                {orden.detallesOrden.map((detalleOrden) => (
+                  <div key={detalleOrden.nombreProducto} className="flex mb-5">
+                    <img
+                      src={`${detalleOrden.producto.imagenesProducto[0].url}`}
+                      width={100}
+                      height={100}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                      }}
+                      alt={detalleOrden.nombreProducto}
+                      className="mr-5 rounded"
+                    />
+                    <div>
+                      <p>{detalleOrden.nombreProducto}</p>
+                      <p>
+                        {formatCurrency(detalleOrden.precioVenta)} x{" "}
+                        {detalleOrden.cantidad}
+                      </p>
+                      <p className="font-bold">
+                        Subtotal:{" "}
+                        {formatCurrency(
+                          detalleOrden.precioVenta * detalleOrden.cantidad
+                        )}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="flex flex-col items-center gap-y-2">
+                <span className="font-title">Realiza tu pago contactándote a este número</span>
+                <WhatsAppLink />
+              </div>
             </div>
             {/* Checkout - Resumen de orden */}
             <div className="bg-white rounded-xl shadow-xl p-7">
