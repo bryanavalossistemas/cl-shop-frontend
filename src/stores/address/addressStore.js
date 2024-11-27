@@ -27,7 +27,6 @@ const useAddressStore = create()(
             distritoId: "",
             distrito: "",
             celular: "",
-            rememberAddress: "",
           },
         });
       },

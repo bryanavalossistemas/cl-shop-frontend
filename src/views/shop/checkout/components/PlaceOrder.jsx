@@ -1,6 +1,6 @@
 import ordenService from "@/services/ordenService";
-import useAddressStore from "@/stores/address/addressStore";
 import useCartStore from "@/stores/cart/cartStore";
+import useAddressStore from "@/stores/address/addressStore";
 import formatCurrency from "@/utils/formatCurrency";
 import { useMutation } from "@tanstack/react-query";
 // import clsx from "clsx";
@@ -13,6 +13,7 @@ export default function PlaceOrder() {
   );
   const cart = useCartStore((state) => state.cart);
   const clearCart = useCartStore((state) => state.clearCart);
+  const clearAddress = useAddressStore((state) => state.clearAddress);
 
   const navigate = useNavigate();
 
@@ -23,6 +24,7 @@ export default function PlaceOrder() {
     },
     onSuccess: ({ orden }) => {
       clearCart();
+      clearAddress();
       navigate(`/order/${orden.id}`);
     },
   });

@@ -47,7 +47,6 @@ export default function AddressForm({ distritos, direccion = {} }) {
 
   const setAddress = useAddressStore((state) => state.setAddress);
   const address = useAddressStore((state) => state.address);
-  const clearAddress = useAddressStore((state) => state.clearAddress);
 
   useEffect(() => {
     if (address.nombre) {
@@ -67,7 +66,6 @@ export default function AddressForm({ distritos, direccion = {} }) {
       createOrUpdateDireccion({ data: restAddress });
     } else {
       deleteDireccion();
-      clearAddress();
     }
   };
 
@@ -80,6 +78,7 @@ export default function AddressForm({ distritos, direccion = {} }) {
         <span>Nombres</span>
         <input
           type="text"
+          required
           className="p-2 border rounded-md bg-gray-200"
           {...register("nombre", { required: true })}
         />
@@ -89,6 +88,7 @@ export default function AddressForm({ distritos, direccion = {} }) {
         <span>Apellidos</span>
         <input
           type="text"
+          required
           className="p-2 border rounded-md bg-gray-200"
           {...register("apellido", { required: true })}
         />
@@ -98,6 +98,7 @@ export default function AddressForm({ distritos, direccion = {} }) {
         <span>Dirección</span>
         <input
           type="text"
+          required
           className="p-2 border rounded-md bg-gray-200"
           {...register("direccion", { required: true })}
         />
@@ -107,6 +108,7 @@ export default function AddressForm({ distritos, direccion = {} }) {
         <span>Distrito</span>
         <select
           className="p-2 border rounded-md bg-gray-200"
+          required
           {...register("distritoId", { required: true })}
         >
           <option value="">[ Seleccione ]</option>
@@ -121,6 +123,7 @@ export default function AddressForm({ distritos, direccion = {} }) {
       <div className="flex flex-col mb-2">
         <span>Celular</span>
         <input
+          required
           type="text"
           className="p-2 border rounded-md bg-gray-200"
           {...register("celular", { required: true })}
