@@ -57,14 +57,22 @@ const useCartStore = create()(
       updateProductQuantity: (producto, cantidad) => {
         const { cart } = get();
 
-        const updatedCartProducts = cart.map((item) => {
+        // Si la cantidad es 0, elimina el producto del carrito
+        if (cantidad === 0) {
+          const updatedCart = cart.filter((item) => item.id !== producto.id);
+          set({ cart: updatedCart });
+          return;
+        }
+
+        // Si la cantidad no es 0, actualiza la cantidad del producto
+        const updatedCart = cart.map((item) => {
           if (item.id === producto.id) {
             return { ...item, cantidad: cantidad };
           }
           return item;
         });
 
-        set({ cart: updatedCartProducts });
+        set({ cart: updatedCart });
       },
 
       removeProduct: (producto) => {
